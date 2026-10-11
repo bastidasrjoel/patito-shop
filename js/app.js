@@ -14,8 +14,9 @@ function safeGetJSON(key, fallback) {
 
 // Estado global de la aplicación
 const AppState = {
-  products: (typeof PRODUCTS_DATA !== 'undefined') ? PRODUCTS_DATA : [],
-  filteredProducts: (typeof PRODUCTS_DATA !== 'undefined') ? [...PRODUCTS_DATA] : [],
+  storeConfig: (typeof getStoreConfig === 'function') ? getStoreConfig() : DEFAULT_STORE_CONFIG,
+  products: (typeof getStoredProducts === 'function') ? getStoredProducts() : ((typeof PRODUCTS_DATA !== 'undefined') ? PRODUCTS_DATA : []),
+  filteredProducts: [],
   cart: safeGetJSON('patito_cart', []),
   wishlist: safeGetJSON('patito_wishlist', []),
   filters: {
@@ -29,10 +30,9 @@ const AppState = {
   quickViewProduct: null,
   selectedSize: null,
   selectedColor: null,
-  selectedQty: 1,
-  freeShippingThreshold: 50.00,
-  shippingCost: 4.99
+  selectedQty: 1
 };
+AppState.filteredProducts = [...AppState.products];
 
 // ==========================================================================
 // INICIALIZACIÓN
@@ -40,12 +40,47 @@ const AppState = {
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  applyStoreConfigToUI();
   initEventListeners();
   renderProducts();
   updateCartUI();
   updateWishlistUI();
   setupLucideIcons();
 });
+
+function applyStoreConfigToUI() {
+  const cfg = AppState.storeConfig;
+  if (!cfg) return;
+
+  // Actualizar anuncio superior
+  const annEl = document.getElementById('announcement-bar-text');
+  if (annEl && cfg.announcement) {
+    annEl.textContent = cfg.announcement;
+  }
+
+  // Actualizar información del footer
+  const phoneEl = document.getElementById('footer-phone');
+  if (phoneEl && cfg.phone) {
+    phoneEl.textContent = cfg.phone;
+    phoneEl.closest('a')?.setAttribute('href', `tel:${cfg.phone.replace(/[^0-9+]/g, '')}`);
+  }
+
+  const emailEl = document.getElementById('footer-email');
+  if (emailEl && cfg.email) {
+    emailEl.textContent = cfg.email;
+    emailEl.closest('a')?.setAttribute('href', `mailto:${cfg.email}`);
+  }
+
+  const addressEl = document.getElementById('footer-address');
+  if (addressEl && cfg.address) {
+    addressEl.textContent = cfg.address;
+  }
+
+  const hoursEl = document.getElementById('footer-hours');
+  if (hoursEl && cfg.hours) {
+    hoursEl.textContent = cfg.hours;
+  }
+}
 
 function setupLucideIcons() {
   if (window.lucide) {
@@ -543,6 +578,10 @@ function saveCart() {
 
 function calculateCartTotals() {
   const subtotal = AppState.cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+  const cfg = AppState.storeConfig || DEFAULT_STORE_CONFIG;
+  const freeThreshold = Number(cfg.freeShippingThreshold) || 50.0;
+  const baseShipping = Number(cfg.shippingCost) || 4.99;
+  const taxPercent = (Number(cfg.taxRate) || 8) / 100;
   
   let discountAmount = 0;
   if (AppState.appliedCoupon) {
@@ -553,11 +592,11 @@ function calculateCartTotals() {
     }
   }
 
-  const isFreeShipping = subtotal >= AppState.freeShippingThreshold || (AppState.appliedCoupon && AppState.appliedCoupon.type === 'shipping');
-  const shipping = subtotal === 0 ? 0 : (isFreeShipping ? 0 : AppState.shippingCost);
+  const isFreeShipping = subtotal >= freeThreshold || (AppState.appliedCoupon && AppState.appliedCoupon.type === 'shipping');
+  const shipping = subtotal === 0 ? 0 : (isFreeShipping ? 0 : baseShipping);
   
   const taxableSubtotal = Math.max(0, subtotal - discountAmount);
-  const taxes = taxableSubtotal * 0.08; // 8% estimado
+  const taxes = taxableSubtotal * taxPercent;
   const total = taxableSubtotal + shipping + taxes;
 
   return {
@@ -565,6 +604,7 @@ function calculateCartTotals() {
     discountAmount,
     shipping,
     isFreeShipping,
+    freeThreshold,
     taxes,
     total
   };
@@ -596,14 +636,15 @@ function updateCartUI() {
 
   // Barra de progreso de envío gratis
   if (shippingProgressBar && shippingProgressText) {
-    if (totals.subtotal >= AppState.freeShippingThreshold) {
+    const limit = totals.freeThreshold;
+    if (totals.subtotal >= limit) {
       shippingProgressText.innerHTML = `🎉 <strong>¡Felicidades!</strong> Tu pedido califica para <strong>Envío GRATIS</strong>.`;
       shippingProgressBar.style.width = '100%';
       shippingProgressBar.classList.remove('bg-amber-500');
       shippingProgressBar.classList.add('bg-emerald-500');
     } else {
-      const remaining = (AppState.freeShippingThreshold - totals.subtotal).toFixed(2);
-      const percentage = Math.min(100, (totals.subtotal / AppState.freeShippingThreshold) * 100);
+      const remaining = (limit - totals.subtotal).toFixed(2);
+      const percentage = Math.min(100, (totals.subtotal / limit) * 100);
       shippingProgressText.innerHTML = `🦆 Te faltan <strong>$${remaining}</strong> para desbloquear <strong>Envío GRATIS</strong>.`;
       shippingProgressBar.style.width = `${percentage}%`;
       shippingProgressBar.classList.remove('bg-emerald-500');
@@ -725,14 +766,15 @@ function applyCouponCode() {
     return;
   }
 
-  if (DISCOUNT_COUPONS[code]) {
-    AppState.appliedCoupon = DISCOUNT_COUPONS[code];
+  const availableCoupons = (typeof getStoredCoupons === 'function') ? getStoredCoupons() : DEFAULT_COUPONS;
+  if (availableCoupons[code]) {
+    AppState.appliedCoupon = availableCoupons[code];
     saveCart();
     updateCartUI();
     showToast(`¡Cupón ${code} aplicado correctamente!`, 'success', 'check-circle');
     input.value = '';
   } else {
-    showToast('Cupón no válido o expirado. Prueba PATITO10 o PATITOPREMIUM', 'error', 'x-circle');
+    showToast('Cupón no válido o expirado. Consulta tus cupones activos.', 'error', 'x-circle');
   }
 }
 
@@ -917,6 +959,43 @@ function handleCheckoutSubmit(e) {
     `).join('');
 
     document.getElementById('order-total-display').textContent = `$${totals.total.toFixed(2)}`;
+
+    // Registrar pedido en el historial para el Panel de Administración
+    if (typeof saveStoredOrder === 'function') {
+      saveStoredOrder({
+        id: orderNumber,
+        date: new Date().toISOString(),
+        dateFormatted: new Date().toLocaleDateString('es-ES', { 
+          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+        }),
+        customer: {
+          fullName,
+          email,
+          phone: document.getElementById('cust-phone')?.value || '',
+          address,
+          city,
+          zip: document.getElementById('cust-zip')?.value || ''
+        },
+        items: purchasedItems.map(it => ({
+          name: it.product.name,
+          category: it.product.categoryLabel,
+          size: it.size,
+          color: it.color,
+          quantity: it.quantity,
+          price: it.product.price,
+          total: it.product.price * it.quantity
+        })),
+        totals: {
+          subtotal: totals.subtotal,
+          discount: totals.discountAmount,
+          shipping: totals.shipping,
+          taxes: totals.taxes,
+          total: totals.total
+        },
+        paymentMethod: document.querySelector('input[name="payment_method"]:checked')?.value || 'card',
+        status: 'Pagado y Confirmado'
+      });
+    }
 
     // Vaciar carrito
     clearCart();

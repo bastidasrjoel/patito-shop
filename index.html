@@ -55,7 +55,7 @@
   <!-- Barra de Anuncios Superior -->
   <aside class="bg-amber-500 text-slate-950 py-2 px-4 text-xs font-black tracking-wide text-center uppercase flex items-center justify-center gap-2 relative z-50 shadow-sm" aria-label="Aviso promocional">
     <span class="inline-block animate-bounce">🦆</span>
-    <span>¡Envío <strong>GRATIS</strong> en compras sobre $50! Usa el cupón <strong>PATITO10</strong> para 10% OFF</span>
+    <span id="announcement-bar-text">¡Envío <strong>GRATIS</strong> en compras sobre $50! Usa el cupón <strong>PATITO10</strong> para 10% OFF</span>
     <span class="hidden md:inline-block">• Garantía de 30 días</span>
   </aside>
 
@@ -120,6 +120,16 @@
             <i data-lucide="moon" class="w-5 h-5 hidden dark:block text-amber-400"></i>
             <i data-lucide="sun" class="w-5 h-5 block dark:hidden text-amber-500"></i>
           </button>
+
+          <!-- Botón Acceso Admin -->
+          <a 
+            href="admin.html" 
+            class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-amber-500 dark:hover:bg-amber-500 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-slate-950 font-bold text-xs transition shadow-sm"
+            title="Panel de Administración"
+          >
+            <i data-lucide="shield-check" class="w-4 h-4 text-amber-500"></i>
+            <span class="hidden lg:inline">Admin</span>
+          </a>
 
           <!-- Botón Lista de Deseos / Favoritos -->
           <button 
@@ -987,7 +997,7 @@
             <li><a href="#catalogo" class="hover:text-amber-400 transition">Estado de mi Pedido</a></li>
             <li><a href="#catalogo" class="hover:text-amber-400 transition">Políticas de Devolución</a></li>
             <li><a href="#catalogo" class="hover:text-amber-400 transition">Tiempos de Envío</a></li>
-            <li><a href="#catalogo" class="hover:text-amber-400 transition">Preguntas Frecuentes</a></li>
+            <li><a href="admin.html" class="inline-flex items-center gap-1.5 text-amber-400 hover:text-amber-300 font-bold transition"><i data-lucide="settings" class="w-3.5 h-3.5"></i> Panel de Administración</a></li>
           </ul>
         </div>
 
@@ -997,19 +1007,19 @@
           <ul class="space-y-2.5 text-slate-400">
             <li class="flex items-center gap-2">
               <i data-lucide="mail" class="w-4 h-4 text-amber-500"></i>
-              <span>hola@patitoshop.com</span>
+              <span id="footer-email">hola@patitoshop.com</span>
             </li>
             <li class="flex items-center gap-2">
               <i data-lucide="phone" class="w-4 h-4 text-amber-500"></i>
-              <span>+1 (800) 728-486</span>
+              <span id="footer-phone">+1 (800) 728-486</span>
             </li>
             <li class="flex items-center gap-2">
               <i data-lucide="map-pin" class="w-4 h-4 text-amber-500"></i>
-              <span>Av. Estilo Urbano 101</span>
+              <span id="footer-address">Av. Estilo Urbano 101</span>
             </li>
             <li class="flex items-center gap-2 text-emerald-400 font-bold">
               <i data-lucide="clock" class="w-4 h-4"></i>
-              <span>Lun a Sáb: 9am - 8pm</span>
+              <span id="footer-hours">Lun a Sáb: 9am - 8pm</span>
             </li>
           </ul>
         </div>

@@ -54,6 +54,13 @@ Una aplicación web moderna, accesible, intuitiva y 100% responsiva para **Patit
 - **Gestor de Pedidos**:
   - Visualizar todas las órdenes de compra realizadas por los clientes con sus datos de contacto y entrega.
 
+### 🔥 Integración Cloud con Google Firebase (`Firestore`)
+- **Persistencia Híbrida**: Almacenamiento dual que combina **Cloud Firestore** con fallback automático a **LocalStorage** (funciona 100% offline o conectado a la nube).
+- **Gestor Visual de Credenciales**: Pestaña dedicada en `admin.html` para ingresar `apiKey`, `projectId`, etc.
+- **Botón de Ping en Vivo**: Prueba la conexión con Cloud Firestore en tiempo real.
+- **Sincronización en un Clic**: Botón para subir todo el catálogo inicial local a Firestore con un solo clic.
+- **Sincronización de Pedidos**: Las compras en la tienda se registran instantáneamente en la colección `orders` de Firestore.
+
 ### ♿ Accesibilidad (WCAG AA) & Experiencia de Usuario (UX)
 - Navegación por teclado completa (foco visible accesible, tecla `Escape` para cerrar cualquier modal/drawer).
 - Enlace de salto rápido (*Skip Link*) para lectores de pantalla.

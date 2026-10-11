@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patito SHOP | Tienda Oficial de Ropa, Calzados y Accesorios</title>
+  <meta name="description" content="Patito SHOP - Tu tienda online moderna, accesible y confiable. Encuentra las mejores prendas, ropa urbana, calzados cómodos y accesorios con envío gratis.">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN con configuración personalizada -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              200: '#fde68a',
+              300: '#fcd34d',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              800: '#92400e',
+              900: '#78350f',
+              950: '#451a03'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Estilos Customizados -->
+  <link rel="stylesheet" href="css/styles.css?v=2">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Enlace de salto para accesibilidad (WCAG) -->
+  <a href="#catalogo" class="skip-link">Saltar al catálogo de productos</a>
+
+  <!-- Barra de Anuncios Superior -->
+  <aside class="bg-amber-500 text-slate-950 py-2 px-4 text-xs font-black tracking-wide text-center uppercase flex items-center justify-center gap-2 relative z-50 shadow-sm" aria-label="Aviso promocional">
+    <span class="inline-block animate-bounce">🦆</span>
+    <span>¡Envío <strong>GRATIS</strong> en compras sobre $50! Usa el cupón <strong>PATITO10</strong> para 10% OFF</span>
+    <span class="hidden md:inline-block">• Garantía de 30 días</span>
+  </aside>
+
+  <!-- Header y Navegación Principal -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 gap-4">
+        
+        <!-- Logo de Marca -->
+        <a href="#" class="logo-container flex items-center gap-3 shrink-0 group focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-xl p-1" aria-label="Patito SHOP Inicio">
+          <div class="w-11 h-11 rounded-2xl bg-amber-500 flex items-center justify-center text-2xl shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform">
+            <span class="duck-icon">🦆</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
+              Patito <span class="text-amber-500">SHOP</span>
+            </span>
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">
+              Prendas • Calzados • Accesorios
+            </span>
+          </div>
+        </a>
+
+        <!-- Enlaces de Navegación de Categorías (Desktop) -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-2" aria-label="Navegación por categorías">
+          <button type="button" onclick="setCategoryFilter('all')" class="cat-pill-btn px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-slate-950 shadow-sm transition" data-cat="all">
+            Todos
+          </button>
+          <button type="button" onclick="setCategoryFilter('ropa')" class="cat-pill-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 transition" data-cat="ropa">
+            👕 Ropa
+          </button>
+          <button type="button" onclick="setCategoryFilter('calzados')" class="cat-pill-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 transition" data-cat="calzados">
+            👟 Calzados
+          </button>
+          <button type="button" onclick="setCategoryFilter('accesorios')" class="cat-pill-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 transition" data-cat="accesorios">
+            🎒 Accesorios
+          </button>
+        </nav>
+
+        <!-- Barra de Búsqueda Interactiva -->
+        <div class="hidden sm:flex items-center flex-1 max-w-xs lg:max-w-sm relative">
+          <label for="nav-search-input" class="sr-only">Buscar prendas, calzados o accesorios</label>
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"></i>
+          <input 
+            type="search" 
+            id="nav-search-input" 
+            placeholder="Buscar ropa, tenis, mochilas..." 
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-xs md:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-amber-500 transition outline-none"
+          />
+        </div>
+
+        <!-- Acciones: Tema, Favoritos, Carrito, Móvil -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          
+          <!-- Botón Tema Oscuro/Claro -->
+          <button 
+            type="button" 
+            onclick="toggleTheme()" 
+            class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition focus:ring-2 focus:ring-amber-500" 
+            aria-label="Cambiar tema claro u oscuro"
+          >
+            <i data-lucide="moon" class="w-5 h-5 hidden dark:block text-amber-400"></i>
+            <i data-lucide="sun" class="w-5 h-5 block dark:hidden text-amber-500"></i>
+          </button>
+
+          <!-- Botón Lista de Deseos / Favoritos -->
+          <button 
+            type="button" 
+            onclick="openWishlistDrawer()" 
+            class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition relative focus:ring-2 focus:ring-amber-500" 
+            aria-label="Ver lista de favoritos"
+          >
+            <i data-lucide="heart" class="w-5 h-5"></i>
+            <span id="wishlist-count-badge" class="hidden absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center shadow-md">
+              0
+            </span>
+          </button>
+
+          <!-- Botón del Carrito de Compras -->
+          <button 
+            type="button" 
+            onclick="openCartDrawer()" 
+            class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-md shadow-amber-500/20 transition-all hover:scale-105 focus:ring-2 focus:ring-amber-400" 
+            aria-label="Abrir carrito de compras"
+          >
+            <div class="relative">
+              <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+              <span id="cart-count-badge" class="hidden absolute -top-2 -right-2 bg-slate-950 text-amber-400 text-[10px] font-black w-4 h-4 rounded-full items-center justify-center">
+                0
+              </span>
+            </div>
+            <span class="hidden sm:inline">Carrito</span>
+          </button>
+
+          <!-- Botón Menú Móvil -->
+          <button 
+            type="button" 
+            onclick="toggleMobileMenu()" 
+            class="md:hidden w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 transition focus:ring-2 focus:ring-amber-500" 
+            aria-label="Abrir menú de navegación"
+          >
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Barra de búsqueda móvil secundaria -->
+      <div class="sm:hidden pb-3">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none"></i>
+          <input 
+            type="search" 
+            placeholder="Buscar prendas, calzados..." 
+            oninput="AppState.filters.search = this.value; applyFilters();"
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-amber-500 outline-none"
+          />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menú Móvil Drawer -->
+  <div id="mobile-menu-drawer" class="drawer-backdrop fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm" onclick="if(event.target === this) closeMobileMenu();">
+    <div class="drawer-panel absolute top-0 right-0 w-80 max-w-full h-full bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col">
+      <div class="flex items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🦆</span>
+          <span class="font-black text-lg text-slate-900 dark:text-white">Patito SHOP</span>
+        </div>
+        <button type="button" onclick="closeMobileMenu()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <nav class="py-6 space-y-2 flex-1" aria-label="Menú móvil">
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Categorías</p>
+        <button type="button" onclick="setCategoryFilter('all'); closeMobileMenu();" class="w-full flex items-center justify-between p-3 rounded-xl font-bold text-slate-800 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-800 transition">
+          <span>🌟 Todos los productos</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </button>
+        <button type="button" onclick="setCategoryFilter('ropa'); closeMobileMenu();" class="w-full flex items-center justify-between p-3 rounded-xl font-bold text-slate-800 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-800 transition">
+          <span>👕 Ropa y Prendas</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </button>
+        <button type="button" onclick="setCategoryFilter('calzados'); closeMobileMenu();" class="w-full flex items-center justify-between p-3 rounded-xl font-bold text-slate-800 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-800 transition">
+          <span>👟 Calzados Urbanos</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </button>
+        <button type="button" onclick="setCategoryFilter('accesorios'); closeMobileMenu();" class="w-full flex items-center justify-between p-3 rounded-xl font-bold text-slate-800 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-800 transition">
+          <span>🎒 Accesorios & Mochilas</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </button>
+      </nav>
+
+      <div class="pt-6 border-t border-slate-200 dark:border-slate-800 space-y-3">
+        <button type="button" onclick="openSizeGuideModal(); closeMobileMenu();" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center gap-2">
+          <i data-lucide="ruler" class="w-4 h-4"></i> Guía de Tallas
+        </button>
+        <div class="text-xs text-center text-slate-400">
+          Patito SHOP v1.0 • Hecho con estilo 🦆
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO SECTION CON BANNER VIBRANTE -->
+  <section class="relative overflow-hidden bg-gradient-to-b from-amber-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-950 py-12 lg:py-20 border-b border-slate-200/60 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Contenido Hero -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300 text-xs font-black uppercase tracking-wider shadow-sm pulse-badge">
+            <span>🔥 NUEVA TEMPORADA 2026</span>
+            <span>•</span>
+            <span>HASTA 40% OFF</span>
+          </div>
+
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.1]">
+            Viste con actitud, camina con estilo en <span class="text-amber-500 underline decoration-wavy decoration-amber-400">Patito SHOP</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
+            Explora las prendas streetwear más cómodas, sneakers diseñados para pisar fuerte y accesorios que complementan tu personalidad. Todo con envíos rápidos y garantía total.
+          </p>
+
+          <!-- Acciones Rápidas -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2">
+            <a href="#catalogo" class="px-7 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 hover:-translate-y-0.5 transition-all flex items-center gap-2 text-sm sm:text-base">
+              <span>Ver Catálogo Completo</span>
+              <i data-lucide="arrow-down" class="w-4 h-4"></i>
+            </a>
+            <button type="button" onclick="setCategoryFilter('calzados')" class="px-6 py-4 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition text-sm sm:text-base flex items-center gap-2">
+              <span>Sneakers Populares</span>
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+            </button>
+          </div>
+
+          <!-- Métricas de Confianza -->
+          <div class="pt-6 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0">
+            <div>
+              <p class="text-2xl font-black text-slate-900 dark:text-white">+15,000</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Clientes felices</p>
+            </div>
+            <div>
+              <p class="text-2xl font-black text-slate-900 dark:text-white">4.9 ★</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Calificación media</p>
+            </div>
+            <div>
+              <p class="text-2xl font-black text-slate-900 dark:text-white">100%</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Pagos Seguros</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner Visual / Showcase -->
+        <div class="lg:col-span-5 relative">
+          <div class="relative mx-auto max-w-md lg:max-w-none">
+            <!-- Glow decorativo -->
+            <div class="absolute -inset-4 bg-gradient-to-r from-amber-400 to-amber-600 rounded-3xl blur-2xl opacity-20 dark:opacity-30"></div>
+            
+            <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-slate-700 bg-white dark:bg-slate-800 aspect-[4/5]">
+              <img 
+                src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80" 
+                alt="Moda urbana Patito SHOP" 
+                class="w-full h-full object-cover"
+              >
+              
+              <!-- Tarjeta flotante interactiva -->
+              <div class="absolute bottom-5 inset-x-5 p-4 rounded-2xl glass-panel shadow-xl flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center text-xl shrink-0 font-black">
+                  🦆
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase">Colección Destacada</p>
+                  <p class="text-sm font-black text-slate-900 dark:text-white truncate">Prendas & Sneakers 2026</p>
+                </div>
+                <button type="button" onclick="setCategoryFilter('ropa')" class="px-3 py-1.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-xl hover:scale-105 transition shrink-0">
+                  Ver
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BARRA DE BENEFICIOS / PROPUESTAS DE VALOR -->
+  <section class="bg-white dark:bg-slate-900 py-8 border-b border-slate-200/80 dark:border-slate-800" aria-label="Beneficios de comprar en Patito SHOP">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        
+        <div class="flex items-center gap-3.5 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+            <i data-lucide="truck" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white">Envío Veloz</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Gratis a partir de $50</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3.5 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white">Pago Seguro</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Encriptación SSL 256-bit</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3.5 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+            <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white">Devolución Fácil</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">30 días sin complicaciones</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3.5 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+          <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+            <i data-lucide="headphones" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white">Soporte 24/7</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Atención personalizada</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CATÁLOGO PRINCIPAL Y FILTROS -->
+  <main id="catalogo" class="flex-1 py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    
+    <!-- Encabezado de Sección -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+      <div>
+        <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 text-xs font-black uppercase tracking-wider mb-1">
+          <span>🦆 Catálogo Exclusivo</span>
+        </div>
+        <h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Explora Nuestra Colección</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Prendas de alta calidad, calzados cómodos y accesorios urbanos en tendencia.</p>
+      </div>
+
+      <!-- Barra de Filtros Rápidos de Categoría -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button type="button" onclick="setCategoryFilter('all')" class="cat-pill-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 text-slate-950 shadow-sm transition" data-cat="all">
+          Todos los Artículos
+        </button>
+        <button type="button" onclick="setCategoryFilter('ropa')" class="cat-pill-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-amber-500 transition" data-cat="ropa">
+          👕 Prendas
+        </button>
+        <button type="button" onclick="setCategoryFilter('calzados')" class="cat-pill-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-amber-500 transition" data-cat="calzados">
+          👟 Calzados
+        </button>
+        <button type="button" onclick="setCategoryFilter('accesorios')" class="cat-pill-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-amber-500 transition" data-cat="accesorios">
+          🎒 Accesorios
+        </button>
+      </div>
+    </div>
+
+    <!-- Barra de Filtros Avanzados (Precio, Tallas, Ordenamiento) -->
+    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 mb-8 shadow-sm space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+        
+        <!-- Filtro Rango de Precio -->
+        <div class="md:col-span-4">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
+            <span>Precio Máximo:</span>
+            <span id="filter-price-value" class="text-amber-600 dark:text-amber-400 font-black text-sm">$120</span>
+          </div>
+          <input 
+            type="range" 
+            id="filter-price-slider" 
+            min="20" 
+            max="120" 
+            value="120" 
+            step="5" 
+            class="w-full accent-amber-500 cursor-pointer"
+            aria-label="Filtrar por precio máximo"
+          />
+          <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+            <span>$20</span>
+            <span>$60</span>
+            <span>$120+</span>
+          </div>
+        </div>
+
+        <!-- Filtro por Tallas -->
+        <div class="md:col-span-5">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Talla:</label>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="setSizeFilter('S', this)" class="filter-size-btn px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:border-amber-500 transition">S</button>
+            <button type="button" onclick="setSizeFilter('M', this)" class="filter-size-btn px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:border-amber-500 transition">M</button>
+            <button type="button" onclick="setSizeFilter('L', this)" class="filter-size-btn px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:border-amber-500 transition">L</button>
+            <button type="button" onclick="setSizeFilter('XL', this)" class="filter-size-btn px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:border-amber-500 transition">XL</button>
+            <button type="button" onclick="setSizeFilter('39', this)" class="filter-size-btn px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:border-amber-500 transition">39</button>
+            <button type="button" onclick="setSizeFilter('40', this)" class="filter-size-btn px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:border-amber-500 transition">40</button>
+            <button type="button" onclick="setSizeFilter('41', this)" class="filter-size-btn px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:border-amber-500 transition">41</button>
+            <button type="button" onclick="setSizeFilter('42', this)" class="filter-size-btn px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:border-amber-500 transition">42</button>
+          </div>
+        </div>
+
+        <!-- Ordenamiento -->
+        <div class="md:col-span-3">
+          <label for="filter-sort-select" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Ordenar por:</label>
+          <select 
+            id="filter-sort-select" 
+            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-amber-500"
+          >
+            <option value="featured">✨ Destacados Patito</option>
+            <option value="price-asc">💵 Precio: Menor a Mayor</option>
+            <option value="price-desc">💎 Precio: Mayor a Menor</option>
+            <option value="rating">⭐ Mejor Calificados</option>
+            <option value="newest">🆕 Más Nuevos</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Barra de estado y limpiar filtros -->
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+        <span id="products-count" class="font-bold text-slate-500 dark:text-slate-400">Mostrando productos...</span>
+        <button type="button" onclick="resetFilters()" class="text-amber-600 dark:text-amber-400 font-bold hover:underline flex items-center gap-1">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Restablecer Filtros
+        </button>
+      </div>
+    </div>
+
+    <!-- CUADRÍCULA DE PRODUCTOS RESPONSIVE -->
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Inyectado dinámicamente mediante renderProducts() en app.js -->
+    </div>
+
+  </main>
+
+  <!-- MODAL: VISTA RÁPIDA DE PRODUCTO -->
+  <div id="quick-view-modal" class="modal-backdrop fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onclick="if(event.target === this) closeQuickView();" role="dialog" aria-modal="true" aria-labelledby="quick-view-title">
+    <div class="modal-container bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full p-6 md:p-8 relative shadow-2xl border border-slate-200/80 dark:border-slate-800 my-8">
+      
+      <!-- Botón de Cerrar Modal -->
+      <button 
+        type="button" 
+        onclick="closeQuickView()" 
+        class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-950 dark:hover:text-white flex items-center justify-center transition hover:rotate-90"
+        aria-label="Cerrar vista rápida"
+      >
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div id="quick-view-content">
+        <!-- Renderizado dinámico en app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GUÍA DE TALLAS -->
+  <div id="size-guide-modal" class="modal-backdrop fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onclick="if(event.target === this) closeSizeGuideModal();" role="dialog" aria-modal="true">
+    <div class="modal-container bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 md:p-8 relative shadow-2xl border border-slate-200/80 dark:border-slate-800">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-6">
+        <div class="flex items-center gap-2">
+          <i data-lucide="ruler" class="w-5 h-5 text-amber-500"></i>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white">Guía Oficial de Tallas - Patito SHOP</h3>
+        </div>
+        <button type="button" onclick="closeSizeGuideModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-6 text-xs text-slate-600 dark:text-slate-300">
+        <div>
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">👕 Prendas Superiores (Camisetas & Sudaderas)</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+                  <th class="p-2.5 rounded-l-lg">Talla</th>
+                  <th class="p-2.5">Pecho (cm)</th>
+                  <th class="p-2.5">Cintura (cm)</th>
+                  <th class="p-2.5 rounded-r-lg">Largo (cm)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr><td class="p-2.5 font-bold">S</td><td class="p-2.5">90 - 95</td><td class="p-2.5">76 - 81</td><td class="p-2.5">70</td></tr>
+                <tr><td class="p-2.5 font-bold">M</td><td class="p-2.5">96 - 101</td><td class="p-2.5">82 - 87</td><td class="p-2.5">72</td></tr>
+                <tr><td class="p-2.5 font-bold">L</td><td class="p-2.5">102 - 107</td><td class="p-2.5">88 - 93</td><td class="p-2.5">74</td></tr>
+                <tr><td class="p-2.5 font-bold">XL</td><td class="p-2.5">108 - 114</td><td class="p-2.5">94 - 100</td><td class="p-2.5">76</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-2">👟 Calzados y Sneakers</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+                  <th class="p-2.5 rounded-l-lg">EU</th>
+                  <th class="p-2.5">US Men</th>
+                  <th class="p-2.5">US Women</th>
+                  <th class="p-2.5 rounded-r-lg">Longitud Pie (cm)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr><td class="p-2.5 font-bold">38</td><td class="p-2.5">6.0</td><td class="p-2.5">7.5</td><td class="p-2.5">24.0</td></tr>
+                <tr><td class="p-2.5 font-bold">39</td><td class="p-2.5">6.5</td><td class="p-2.5">8.0</td><td class="p-2.5">24.5</td></tr>
+                <tr><td class="p-2.5 font-bold">40</td><td class="p-2.5">7.5</td><td class="p-2.5">9.0</td><td class="p-2.5">25.5</td></tr>
+                <tr><td class="p-2.5 font-bold">41</td><td class="p-2.5">8.0</td><td class="p-2.5">9.5</td><td class="p-2.5">26.0</td></tr>
+                <tr><td class="p-2.5 font-bold">42</td><td class="p-2.5">9.0</td><td class="p-2.5">10.5</td><td class="p-2.5">27.0</td></tr>
+                <tr><td class="p-2.5 font-bold">43</td><td class="p-2.5">10.0</td><td class="p-2.5">11.5</td><td class="p-2.5">28.0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="text-[11px] text-slate-400 italic">
+          💡 Consejo: Si estás entre dos tallas, recomendamos elegir la talla mayor para mayor holgura y comodidad.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DRAWER: CARRITO DE COMPRAS INTERACTIVO -->
+  <aside id="cart-drawer" class="drawer-backdrop fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm" onclick="if(event.target === this) closeCartDrawer();" role="dialog" aria-modal="true" aria-label="Carrito de compras">
+    <div class="drawer-panel absolute top-0 right-0 w-full max-w-md h-full bg-slate-50 dark:bg-slate-900 shadow-2xl flex flex-col">
+      
+      <!-- Encabezado del Carrito -->
+      <div class="p-5 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-bold">
+            🦆
+          </div>
+          <h3 class="text-lg font-black text-slate-900 dark:text-white">Tu Carrito</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="clearCart()" class="text-xs text-slate-400 hover:text-rose-500 transition px-2 py-1" title="Vaciar todo">
+            Vaciar
+          </button>
+          <button type="button" onclick="closeCartDrawer()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition" aria-label="Cerrar carrito">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Envío Gratis -->
+      <div class="bg-amber-50/80 dark:bg-amber-950/30 px-5 py-3 border-b border-amber-200/50 dark:border-amber-900/50">
+        <p id="shipping-progress-text" class="text-xs text-slate-700 dark:text-slate-300 mb-2">
+          🦆 Te faltan <strong>$50.00</strong> para envío gratis
+        </p>
+        <div class="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div id="shipping-progress-bar" class="shipping-progress-bar h-full bg-amber-500 rounded-full w-0"></div>
+        </div>
+      </div>
+
+      <!-- Cuerpo del Carrito: Items o Vacío -->
+      <div class="flex-1 overflow-y-auto p-5">
+        
+        <!-- Estado Vacío -->
+        <div id="empty-cart-state" class="py-16 text-center space-y-4">
+          <div class="w-20 h-20 mx-auto rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-500 flex items-center justify-center text-3xl">
+            🦆
+          </div>
+          <h4 class="text-lg font-bold text-slate-900 dark:text-white">Tu carrito está vacío</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+            ¡Aún no has agregado prendas ni accesorios! Explora nuestro catálogo y llévate lo mejor de la temporada.
+          </p>
+          <button type="button" onclick="closeCartDrawer(); setCategoryFilter('all');" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md">
+            Empezar a Comprar
+          </button>
+        </div>
+
+        <!-- Lista de Productos en el Carrito -->
+        <ul id="cart-items-container" class="space-y-3 hidden">
+          <!-- Renderizado dinámico en app.js -->
+        </ul>
+
+      </div>
+
+      <!-- Footer del Carrito con Resumen Financiero y Checkout -->
+      <div id="cart-summary-block" class="p-5 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 space-y-4 hidden">
+        
+        <!-- Cupones de Descuento -->
+        <div>
+          <div class="flex gap-2">
+            <input 
+              type="text" 
+              id="coupon-input" 
+              placeholder="Código de cupón (ej: PATITO10)" 
+              class="flex-1 px-3 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-xs text-slate-900 dark:text-white uppercase placeholder:normal-case focus:ring-2 focus:ring-amber-500 outline-none"
+            />
+            <button type="button" onclick="applyCouponCode()" class="px-4 py-2 bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition">
+              Aplicar
+            </button>
+          </div>
+          <div id="active-coupon-pill" class="mt-2 hidden"></div>
+        </div>
+
+        <!-- Desglose de Precios -->
+        <div class="space-y-1.5 text-xs text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div class="flex justify-between">
+            <span>Subtotal</span>
+            <span id="cart-subtotal-val" class="font-bold text-slate-900 dark:text-white">$0.00</span>
+          </div>
+          <div id="cart-discount-row" class="flex justify-between text-emerald-600 dark:text-emerald-400 hidden">
+            <span>Descuento aplicado</span>
+            <span id="cart-discount-val" class="font-bold">-$0.00</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Envío estimado</span>
+            <span id="cart-shipping-val" class="font-bold text-slate-900 dark:text-white">$4.99</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Impuestos estimados (8%)</span>
+            <span id="cart-tax-val" class="font-bold text-slate-900 dark:text-white">$0.00</span>
+          </div>
+          <div class="flex justify-between text-base font-black text-slate-900 dark:text-white pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span>Total</span>
+            <span id="cart-total-val" class="text-amber-500 text-lg">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Botón de Pago Principal -->
+        <button 
+          type="button" 
+          onclick="openCheckoutModal()" 
+          class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm transition shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2"
+        >
+          <i data-lucide="lock" class="w-4 h-4"></i> Proceder al Pago Seguro
+        </button>
+
+        <!-- Indicador de Seguridad -->
+        <div class="flex items-center justify-center gap-4 text-[11px] text-slate-400">
+          <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i> Checkout SSL</span>
+          <span>•</span>
+          <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i> Garantía Patito</span>
+        </div>
+
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- DRAWER: LISTA DE DESEOS / FAVORITOS -->
+  <aside id="wishlist-drawer" class="drawer-backdrop fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm" onclick="if(event.target === this) closeWishlistDrawer();" role="dialog" aria-modal="true" aria-label="Lista de deseos">
+    <div class="drawer-panel absolute top-0 right-0 w-full max-w-md h-full bg-slate-50 dark:bg-slate-900 shadow-2xl flex flex-col">
+      <div class="p-5 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="heart" class="w-5 h-5 text-rose-500 fill-rose-500"></i>
+          <h3 class="text-lg font-black text-slate-900 dark:text-white">Tus Favoritos</h3>
+        </div>
+        <button type="button" onclick="closeWishlistDrawer()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5">
+        <div id="empty-wishlist-state" class="py-16 text-center space-y-3">
+          <div class="w-16 h-16 mx-auto rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-500 flex items-center justify-center text-2xl">
+            ❤️
+          </div>
+          <h4 class="text-base font-bold text-slate-900 dark:text-white">Aún no tienes favoritos</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+            Guarda las prendas y calzados que más te gusten haciendo clic en el corazón de cada producto.
+          </p>
+        </div>
+
+        <ul id="wishlist-items-container" class="space-y-3 hidden">
+          <!-- Renderizado dinámico en app.js -->
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MODAL: CHECKOUT INTEGRADO Y PASARELA DE PAGO SIMULADA -->
+  <div id="checkout-modal" class="modal-backdrop fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onclick="if(event.target === this) closeCheckoutModal();" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+    <div class="modal-container bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 md:p-8 relative shadow-2xl border border-slate-200/80 dark:border-slate-800 my-8">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-6">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-bold">
+            🦆
+          </div>
+          <div>
+            <h3 id="checkout-modal-title" class="text-xl font-black text-slate-900 dark:text-white">Finalizar Compra</h3>
+            <p class="text-xs text-slate-400">Patito SHOP • Pago Rápido y Protegido</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="checkout-form" class="space-y-6">
+        
+        <!-- Paso 1: Datos Personales y Envío -->
+        <div>
+          <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-amber-500 text-slate-950 inline-flex items-center justify-center text-[10px]">1</span>
+            Dirección de Envío
+          </h4>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="sm:col-span-2">
+              <label for="cust-name" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nombre Completo *</label>
+              <input type="text" id="cust-name" required placeholder="Ej: Joel Bastidas" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div>
+              <label for="cust-email" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Correo Electrónico *</label>
+              <input type="email" id="cust-email" required placeholder="correo@ejemplo.com" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div>
+              <label for="cust-phone" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Teléfono Móvil *</label>
+              <input type="tel" id="cust-phone" required placeholder="+1 234 567 890" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div class="sm:col-span-2">
+              <label for="cust-address" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Dirección Completa de Entrega *</label>
+              <input type="text" id="cust-address" required placeholder="Calle, Número, Apto / Referencia" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div>
+              <label for="cust-city" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Ciudad *</label>
+              <input type="text" id="cust-city" required placeholder="Ej: Santiago / Madrid / CDMX" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div>
+              <label for="cust-zip" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Código Postal</label>
+              <input type="text" id="cust-zip" placeholder="Opcional" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 2: Método de Pago Seguro -->
+        <div>
+          <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-amber-500 text-slate-950 inline-flex items-center justify-center text-[10px]">2</span>
+            Método de Pago
+          </h4>
+
+          <div class="grid grid-cols-3 gap-2 mb-4 text-xs">
+            <label class="flex flex-col items-center justify-center p-3 rounded-xl border-2 border-amber-500 bg-amber-50/50 dark:bg-amber-950/20 cursor-pointer font-bold text-center">
+              <input type="radio" name="payment_method" value="card" checked class="sr-only">
+              <i data-lucide="credit-card" class="w-5 h-5 text-amber-500 mb-1"></i>
+              <span>Tarjeta</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-amber-500 cursor-pointer font-bold text-center text-slate-600 dark:text-slate-300">
+              <input type="radio" name="payment_method" value="paypal" class="sr-only">
+              <i data-lucide="wallet" class="w-5 h-5 text-indigo-500 mb-1"></i>
+              <span>PayPal</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-amber-500 cursor-pointer font-bold text-center text-slate-600 dark:text-slate-300">
+              <input type="radio" name="payment_method" value="cash" class="sr-only">
+              <i data-lucide="banknote" class="w-5 h-5 text-emerald-500 mb-1"></i>
+              <span>Contra Entrega</span>
+            </label>
+          </div>
+
+          <!-- Campos simulados de Tarjeta -->
+          <div class="space-y-3 bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs">
+            <div>
+              <label for="card-num" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Número de Tarjeta</label>
+              <div class="relative">
+                <input type="text" id="card-num" maxlength="19" placeholder="4532 •••• •••• 8892" class="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none font-mono">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400 absolute right-3 top-2.5"></i>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="card-exp" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Expiración (MM/AA)</label>
+                <input type="text" id="card-exp" maxlength="5" placeholder="12/28" class="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none font-mono">
+              </div>
+              <div>
+                <label for="card-cvv" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">CVV / CVC</label>
+                <input type="password" id="card-cvv" maxlength="4" placeholder="•••" class="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none font-mono">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen del Pedido en Checkout -->
+        <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 space-y-2 text-xs">
+          <div class="flex justify-between text-slate-500 dark:text-slate-400">
+            <span>Artículos seleccionados:</span>
+            <span id="checkout-items-count" class="font-bold text-slate-800 dark:text-slate-200">0</span>
+          </div>
+          <div class="flex justify-between text-slate-500 dark:text-slate-400">
+            <span>Subtotal:</span>
+            <span id="checkout-subtotal" class="font-bold text-slate-800 dark:text-slate-200">$0.00</span>
+          </div>
+          <div class="flex justify-between text-slate-500 dark:text-slate-400">
+            <span>Costo de Envío:</span>
+            <span id="checkout-shipping" class="font-bold text-slate-800 dark:text-slate-200">$0.00</span>
+          </div>
+          <div class="flex justify-between text-slate-500 dark:text-slate-400">
+            <span>Impuestos (8%):</span>
+            <span id="checkout-tax" class="font-bold text-slate-800 dark:text-slate-200">$0.00</span>
+          </div>
+          <div class="flex justify-between text-sm font-black text-slate-900 dark:text-white pt-2 border-t border-slate-200 dark:border-slate-700">
+            <span>Total a Pagar:</span>
+            <span id="checkout-total" class="text-amber-500 text-base">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Botón Enviar Pedido -->
+        <button 
+          type="submit" 
+          id="checkout-submit-btn" 
+          class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-sm transition shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2"
+        >
+          <i data-lucide="check-circle" class="w-4 h-4"></i> Confirmar Pedido y Pagar
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRMACIÓN Y COMPROBANTE DE COMPRA (ORDEN EXITOSA) -->
+  <div id="order-success-modal" class="modal-backdrop fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto" role="dialog" aria-modal="true">
+    <div id="confetti-container" class="pointer-events-none absolute inset-0 overflow-hidden"></div>
+    
+    <div class="modal-container bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 md:p-8 relative shadow-2xl border border-slate-200 dark:border-slate-800 text-center my-8">
+      
+      <!-- Contenido Imprimible de Comprobante -->
+      <div id="order-receipt-content" class="space-y-4">
+        <div class="w-20 h-20 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-500 flex items-center justify-center text-4xl shadow-lg shadow-emerald-500/20">
+          ✓
+        </div>
+
+        <h3 class="text-2xl font-black text-slate-900 dark:text-white">¡Gracias por tu compra!</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Tu pedido en <strong>Patito SHOP</strong> ha sido procesado exitosamente y ya lo estamos preparando con cariño.
+        </p>
+
+        <!-- Caja de Resumen -->
+        <div class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-4 text-left border border-slate-200 dark:border-slate-700 space-y-3">
+          <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-200 dark:border-slate-700">
+            <span class="text-slate-500">Número de Orden:</span>
+            <span id="order-number-display" class="font-black text-amber-600 dark:text-amber-400 font-mono">PAT-000000</span>
+          </div>
+          
+          <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-200 dark:border-slate-700">
+            <span class="text-slate-500">Fecha y Hora:</span>
+            <span id="order-date-display" class="font-medium text-slate-700 dark:text-slate-300">Hoy</span>
+          </div>
+
+          <div id="order-customer-info" class="text-xs">
+            <!-- Datos del cliente inyectados por app.js -->
+          </div>
+
+          <div class="pt-2">
+            <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Detalle de Productos:</p>
+            <div id="order-items-summary" class="space-y-1">
+              <!-- Items inyectados -->
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center text-sm font-black text-slate-900 dark:text-white pt-2 border-t border-slate-200 dark:border-slate-700">
+            <span>Total Pagado:</span>
+            <span id="order-total-display" class="text-amber-500 text-base">$0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones Finales -->
+      <div class="pt-4 flex flex-col sm:flex-row gap-3">
+        <button type="button" onclick="window.print()" class="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2">
+          <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Recibo
+        </button>
+        <button type="button" onclick="closeOrderSuccessModal()" class="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i> Seguir Comprando
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONTENEDOR DE TOAST NOTIFICATIONS ACCESIBLES -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none" aria-live="polite"></div>
+
+  <!-- FOOTER MODERNO Y COMPLETO -->
+  <footer class="bg-slate-900 text-slate-300 pt-16 pb-12 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Newsletter Section -->
+      <div class="bg-gradient-to-r from-amber-500 to-amber-600 rounded-3xl p-8 mb-16 text-slate-950 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="space-y-2 text-center md:text-left">
+          <span class="inline-block px-3 py-1 bg-slate-950 text-amber-400 rounded-full text-xs font-black uppercase tracking-wider">
+            ¡Únete al Patito Club!
+          </span>
+          <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-950">
+            Recibe 15% de Descuento en tu Primer Pedido
+          </h3>
+          <p class="text-xs sm:text-sm text-amber-950 font-medium max-w-md">
+            Suscríbete para enterarte antes que nadie de lanzamientos exclusivos de ropa, calzados y promociones secretas.
+          </p>
+        </div>
+
+        <form id="newsletter-form" class="w-full md:w-auto flex flex-col sm:flex-row gap-2 max-w-md">
+          <label for="newsletter-email" class="sr-only">Correo electrónico para suscripción</label>
+          <input 
+            type="email" 
+            id="newsletter-email" 
+            required 
+            placeholder="Tu correo electrónico..." 
+            class="px-4 py-3 rounded-xl bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-950 shrink-0 w-full sm:w-64"
+          />
+          <button type="submit" class="px-6 py-3 bg-slate-950 hover:bg-slate-800 text-amber-400 font-black rounded-xl text-xs sm:text-sm transition shrink-0">
+            Suscribirme
+          </button>
+        </form>
+      </div>
+
+      <!-- Columnas del Footer -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800 text-xs">
+        
+        <!-- Marca y Misión -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🦆</span>
+            <span class="text-xl font-black text-white">Patito <span class="text-amber-500">SHOP</span></span>
+          </div>
+          <p class="text-slate-400 leading-relaxed max-w-sm">
+            Diseñamos y seleccionamos prendas modernas, calzados cómodos y accesorios con personalidad única. Estilo fresco para personas auténticas.
+          </p>
+          <div class="flex items-center gap-3 pt-2">
+            <a href="#" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 flex items-center justify-center transition" aria-label="Instagram">
+              <i data-lucide="instagram" class="w-4 h-4"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 flex items-center justify-center transition" aria-label="Facebook">
+              <i data-lucide="facebook" class="w-4 h-4"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 flex items-center justify-center transition" aria-label="Twitter">
+              <i data-lucide="twitter" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Categorías -->
+        <div class="space-y-3">
+          <h4 class="font-black text-white uppercase tracking-wider text-sm">Categorías</h4>
+          <ul class="space-y-2 text-slate-400">
+            <li><button type="button" onclick="setCategoryFilter('ropa')" class="hover:text-amber-400 transition">Prendas y Camisetas</button></li>
+            <li><button type="button" onclick="setCategoryFilter('ropa')" class="hover:text-amber-400 transition">Hoodies y Sudaderas</button></li>
+            <li><button type="button" onclick="setCategoryFilter('calzados')" class="hover:text-amber-400 transition">Sneakers Urbanos</button></li>
+            <li><button type="button" onclick="setCategoryFilter('calzados')" class="hover:text-amber-400 transition">Botines & Sandalias</button></li>
+            <li><button type="button" onclick="setCategoryFilter('accesorios')" class="hover:text-amber-400 transition">Mochilas & Gorras</button></li>
+          </ul>
+        </div>
+
+        <!-- Ayuda y Soporte -->
+        <div class="space-y-3">
+          <h4 class="font-black text-white uppercase tracking-wider text-sm">Ayuda</h4>
+          <ul class="space-y-2 text-slate-400">
+            <li><button type="button" onclick="openSizeGuideModal()" class="hover:text-amber-400 transition">Guía de Tallas</button></li>
+            <li><a href="#catalogo" class="hover:text-amber-400 transition">Estado de mi Pedido</a></li>
+            <li><a href="#catalogo" class="hover:text-amber-400 transition">Políticas de Devolución</a></li>
+            <li><a href="#catalogo" class="hover:text-amber-400 transition">Tiempos de Envío</a></li>
+            <li><a href="#catalogo" class="hover:text-amber-400 transition">Preguntas Frecuentes</a></li>
+          </ul>
+        </div>
+
+        <!-- Contacto Directo -->
+        <div class="space-y-3">
+          <h4 class="font-black text-white uppercase tracking-wider text-sm">Contacto</h4>
+          <ul class="space-y-2.5 text-slate-400">
+            <li class="flex items-center gap-2">
+              <i data-lucide="mail" class="w-4 h-4 text-amber-500"></i>
+              <span>hola@patitoshop.com</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i data-lucide="phone" class="w-4 h-4 text-amber-500"></i>
+              <span>+1 (800) 728-486</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i data-lucide="map-pin" class="w-4 h-4 text-amber-500"></i>
+              <span>Av. Estilo Urbano 101</span>
+            </li>
+            <li class="flex items-center gap-2 text-emerald-400 font-bold">
+              <i data-lucide="clock" class="w-4 h-4"></i>
+              <span>Lun a Sáb: 9am - 8pm</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Copyright y Métodos de Pago Aceptados -->
+      <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <p>© 2026 Patito SHOP S.A. Todos los derechos reservados. Diseñado para ofrecer la mejor experiencia de compra.</p>
+        <div class="flex items-center gap-3">
+          <span class="px-2.5 py-1 bg-slate-800 rounded font-bold text-slate-300">VISA</span>
+          <span class="px-2.5 py-1 bg-slate-800 rounded font-bold text-slate-300">Mastercard</span>
+          <span class="px-2.5 py-1 bg-slate-800 rounded font-bold text-slate-300">PayPal</span>
+          <span class="px-2.5 py-1 bg-slate-800 rounded font-bold text-slate-300">Apple Pay</span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Scripts de la Aplicación -->
+  <script src="js/products.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

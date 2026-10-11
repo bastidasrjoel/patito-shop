@@ -80,11 +80,13 @@ function loadAdminData() {
   populatePaymentsConfigForm();
   renderAdminCoupons();
   renderAdminOrders();
+  populateFirebaseConfigForm();
+  updateFirebaseStatusUI();
   setupLucide();
 }
 
 function switchAdminTab(tabKey) {
-  const tabs = ['products', 'store', 'payments', 'orders'];
+  const tabs = ['products', 'store', 'payments', 'orders', 'firebase'];
   tabs.forEach(t => {
     const view = document.getElementById(`admin-view-${t}`);
     const btn = document.getElementById(`tab-btn-${t}`);
@@ -306,7 +308,13 @@ function handleSaveProduct(e) {
     showAdminToast(`Nuevo producto "${name}" agregado con éxito`, 'success');
   }
 
-  saveStoredProducts(AdminState.products);
+  const targetProd = id ? AdminState.products.find(p => p.id === id) : AdminState.products[0];
+  if (window.FirebaseService) {
+    window.FirebaseService.saveProduct(targetProd);
+  } else {
+    saveStoredProducts(AdminState.products);
+  }
+
   closeProductModal();
   renderAdminProductsTable();
   updateKPIs();
@@ -317,7 +325,12 @@ function deleteProduct(productId) {
   if (!confirm(`¿Estás seguro de que deseas eliminar "${p?.name || 'este producto'}"?`)) return;
 
   AdminState.products = AdminState.products.filter(x => x.id !== productId);
-  saveStoredProducts(AdminState.products);
+  if (window.FirebaseService) {
+    window.FirebaseService.deleteProduct(productId);
+  } else {
+    saveStoredProducts(AdminState.products);
+  }
+
   renderAdminProductsTable();
   updateKPIs();
   showAdminToast('Producto eliminado del catálogo', 'info');
@@ -370,7 +383,11 @@ function handleSaveStoreConfig(e) {
     twitterUrl: document.getElementById('cfg-twitter').value.trim()
   };
 
-  saveStoreConfig(AdminState.config);
+  if (window.FirebaseService) {
+    window.FirebaseService.saveStoreConfig(AdminState.config);
+  } else {
+    saveStoreConfig(AdminState.config);
+  }
   showAdminToast('¡Información de contacto y tienda guardada con éxito!', 'success');
 }
 
@@ -573,4 +590,137 @@ function showAdminToast(message, type = 'success') {
   setTimeout(() => {
     toast.remove();
   }, 3500);
+}
+
+// ==========================================================================
+// INTEGRACIÓN CON GOOGLE FIREBASE
+// ==========================================================================
+
+function populateFirebaseConfigForm() {
+  const cfg = (window.FirebaseService ? window.FirebaseService.loadConfig() : null) || {};
+  document.getElementById('fb-api-key').value = cfg.apiKey || '';
+  document.getElementById('fb-project-id').value = cfg.projectId || '';
+  document.getElementById('fb-auth-domain').value = cfg.authDomain || '';
+  document.getElementById('fb-storage-bucket').value = cfg.storageBucket || '';
+  document.getElementById('fb-messaging-id').value = cfg.messagingSenderId || '';
+  document.getElementById('fb-app-id').value = cfg.appId || '';
+}
+
+function updateFirebaseStatusUI() {
+  const isConn = window.FirebaseService && window.FirebaseService.isConnected;
+  const cfg = window.FirebaseService ? window.FirebaseService.config : null;
+  const badge = document.getElementById('firebase-status-badge');
+  const text = document.getElementById('firebase-status-text');
+  const detail = document.getElementById('firebase-status-detail');
+  const icon = document.getElementById('firebase-status-icon');
+
+  if (isConn && cfg?.projectId) {
+    if (badge) {
+      badge.textContent = 'En Línea';
+      badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300';
+    }
+    if (text) {
+      text.textContent = 'Conectado a Cloud Firestore';
+      text.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300';
+    }
+    if (detail) {
+      detail.textContent = `Proyecto activo: "${cfg.projectId}". Los cambios se sincronizan en la nube.`;
+    }
+    if (icon) {
+      icon.className = 'w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-xl shadow-sm';
+    }
+  } else {
+    if (badge) {
+      badge.textContent = 'Desconectado';
+      badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
+    }
+    if (text) {
+      text.textContent = 'Modo Local / Desconectado';
+      text.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase bg-slate-100 dark:bg-slate-800 text-slate-500';
+    }
+    if (detail) {
+      detail.textContent = 'Ingresa las credenciales de tu proyecto de Firebase abajo para activar el almacenamiento en la nube.';
+    }
+    if (icon) {
+      icon.className = 'w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-xl';
+    }
+  }
+}
+
+function handleSaveFirebaseConfig(e) {
+  e.preventDefault();
+
+  const cfg = {
+    apiKey: document.getElementById('fb-api-key').value.trim(),
+    projectId: document.getElementById('fb-project-id').value.trim(),
+    authDomain: document.getElementById('fb-auth-domain').value.trim(),
+    storageBucket: document.getElementById('fb-storage-bucket').value.trim(),
+    messagingSenderId: document.getElementById('fb-messaging-id').value.trim(),
+    appId: document.getElementById('fb-app-id').value.trim()
+  };
+
+  if (!cfg.apiKey || !cfg.projectId) {
+    showAdminToast('El API Key y el Project ID son requeridos para conectar Firebase.', 'error');
+    return;
+  }
+
+  if (window.FirebaseService) {
+    const ok = window.FirebaseService.saveConfig(cfg);
+    updateFirebaseStatusUI();
+    if (ok) {
+      showAdminToast('¡Firebase conectado con éxito a ' + cfg.projectId + '!', 'success');
+    } else {
+      showAdminToast('Configuración guardada. Comprueba las reglas de tu base de datos.', 'info');
+    }
+  }
+}
+
+async function testFirebaseConnection() {
+  if (!window.FirebaseService) {
+    showAdminToast('El servicio de Firebase no está disponible.', 'error');
+    return;
+  }
+
+  showAdminToast('Probando conexión con Cloud Firestore...', 'info');
+  const res = await window.FirebaseService.testConnection();
+  if (res.success) {
+    updateFirebaseStatusUI();
+    showAdminToast(res.message, 'success');
+  } else {
+    showAdminToast(res.message, 'error');
+  }
+}
+
+async function syncLocalToFirebase() {
+  if (!window.FirebaseService || !window.FirebaseService.isConnected) {
+    showAdminToast('Debes configurar y conectar Firebase antes de sincronizar el catálogo.', 'error');
+    return;
+  }
+
+  try {
+    showAdminToast('Subiendo catálogo local a Cloud Firestore...', 'info');
+    const count = await window.FirebaseService.syncAllLocalProductsToFirebase();
+    showAdminToast(`¡Éxito! Se sincronizaron ${count} productos en Cloud Firestore.`, 'success');
+  } catch (err) {
+    showAdminToast('Error en la sincronización: ' + err.message, 'error');
+  }
+}
+
+function clearFirebaseConfig() {
+  if (!confirm('¿Deseas desvincular Firebase? La tienda volverá a operar únicamente en modo local.')) return;
+  if (window.FirebaseService) {
+    window.FirebaseService.saveConfig({
+      apiKey: '',
+      projectId: '',
+      authDomain: '',
+      storageBucket: '',
+      messagingSenderId: '',
+      appId: ''
+    });
+    window.FirebaseService.isConnected = false;
+    window.FirebaseService.db = null;
+  }
+  populateFirebaseConfigForm();
+  updateFirebaseStatusUI();
+  showAdminToast('Firebase desvinculado. Modo local activo.', 'info');
 }

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | Patito SHOP</title>
+  <meta name="description" content="Panel de administración y gestión oficial para Patito SHOP. Gestiona productos, contacto, pagos, pedidos y cupones.">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              200: '#fde68a',
+              300: '#fcd34d',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              800: '#92400e',
+              900: '#78350f',
+              950: '#451a03'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+    .modal-backdrop {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 200ms ease, visibility 200ms ease;
+    }
+    .modal-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .tab-btn.active {
+      background-color: #f59e0b;
+      color: #020617;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased">
+
+  <!-- PANTALLA DE LOGIN (Si no está autenticado) -->
+  <div id="admin-login-screen" class="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-6">
+      
+      <div class="w-16 h-16 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-amber-500/25">
+        🦆
+      </div>
+
+      <div>
+        <h1 class="text-2xl font-black text-slate-900 dark:text-white">Acceso al Panel de Control</h1>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Patito SHOP • Administración y Gestión</p>
+      </div>
+
+      <!-- Credenciales de muestra para pruebas -->
+      <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-2xl p-3 text-xs text-amber-900 dark:text-amber-200 text-left">
+        <p class="font-bold flex items-center gap-1.5 mb-1"><i data-lucide="key" class="w-3.5 h-3.5"></i> Credenciales de Acceso:</p>
+        <p>Usuario: <strong class="font-mono">admin@patitoshop.com</strong></p>
+        <p>Contraseña: <strong class="font-mono">patito2026</strong></p>
+      </div>
+
+      <form id="admin-login-form" class="space-y-4 text-left text-xs" onsubmit="handleAdminLogin(event)">
+        <div>
+          <label for="login-email" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Correo Electrónico</label>
+          <input 
+            type="email" 
+            id="login-email" 
+            required 
+            value="admin@patitoshop.com" 
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 dark:text-white"
+          />
+        </div>
+
+        <div>
+          <label for="login-pass" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Contraseña</label>
+          <input 
+            type="password" 
+            id="login-pass" 
+            required 
+            value="patito2026" 
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 dark:text-white"
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-sm transition shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2"
+        >
+          <i data-lucide="log-in" class="w-4 h-4"></i> Entrar al Panel
+        </button>
+
+        <div class="text-center pt-2">
+          <a href="index.html" class="text-xs text-slate-500 hover:text-amber-500 transition font-bold">
+            ← Volver a la Tienda Pública
+          </a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL DEL DASHBOARD -->
+  <div id="admin-dashboard" class="flex-1 flex flex-col hidden">
+    
+    <!-- Header del Admin -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-4">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-xl shadow-md">
+            🦆
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-black text-lg text-slate-900 dark:text-white">Patito <span class="text-amber-500">SHOP</span></span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-[10px] font-black uppercase">
+                ADMIN
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400">Gestión de Productos, Tienda y Pagos</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a 
+            href="index.html" 
+            target="_blank" 
+            class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition flex items-center gap-1.5"
+          >
+            <i data-lucide="external-link" class="w-4 h-4 text-amber-500"></i> Ver Tienda
+          </a>
+
+          <button 
+            type="button" 
+            onclick="adminLogout()" 
+            class="px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-xs font-bold transition flex items-center gap-1.5"
+          >
+            <i data-lucide="log-out" class="w-4 h-4"></i> Salir
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Barra de Navegación de Pestañas -->
+    <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex overflow-x-auto gap-2 py-2">
+        <button type="button" onclick="switchAdminTab('products')" id="tab-btn-products" class="tab-btn active px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0">
+          <i data-lucide="package" class="w-4 h-4"></i> Productos (<span id="tab-count-products">0</span>)
+        </button>
+        <button type="button" onclick="switchAdminTab('store')" id="tab-btn-store" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 shrink-0">
+          <i data-lucide="store" class="w-4 h-4"></i> Info & Contacto
+        </button>
+        <button type="button" onclick="switchAdminTab('payments')" id="tab-btn-payments" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 shrink-0">
+          <i data-lucide="credit-card" class="w-4 h-4"></i> Pagos, Envíos & Cupones
+        </button>
+        <button type="button" onclick="switchAdminTab('orders')" id="tab-btn-orders" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 shrink-0">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i> Pedidos Recibidos (<span id="tab-count-orders">0</span>)
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenido del Dashboard -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+      
+      <!-- KPIs Rápidos -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400 font-bold uppercase">Productos</p>
+            <h3 id="kpi-total-products" class="text-2xl font-black text-slate-900 dark:text-white mt-0.5">0</h3>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <i data-lucide="package" class="w-5 h-5"></i>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400 font-bold uppercase">Pedidos</p>
+            <h3 id="kpi-total-orders" class="text-2xl font-black text-slate-900 dark:text-white mt-0.5">0</h3>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400 font-bold uppercase">Ventas Totales</p>
+            <h3 id="kpi-total-revenue" class="text-2xl font-black text-slate-900 dark:text-white mt-0.5">$0.00</h3>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400 font-bold uppercase">Cupones</p>
+            <h3 id="kpi-total-coupons" class="text-2xl font-black text-slate-900 dark:text-white mt-0.5">0</h3>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+            <i data-lucide="tag" class="w-5 h-5"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA 1: GESTIÓN DE PRODUCTOS -->
+      <section id="admin-view-products" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-black text-slate-900 dark:text-white">Inventario de Productos</h2>
+            <p class="text-xs text-slate-400">Agrega, edita precios, modifica stock o elimina prendas, calzados y accesorios.</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button 
+              type="button" 
+              onclick="resetToFactoryProducts()" 
+              class="px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300 text-xs font-bold transition flex items-center gap-1.5"
+              title="Restablecer al catálogo base de Patito SHOP"
+            >
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Restaurar Catálogo
+            </button>
+
+            <button 
+              type="button" 
+              onclick="openProductModal()" 
+              class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition shadow-md flex items-center gap-1.5"
+            >
+              <i data-lucide="plus" class="w-4 h-4"></i> + Nuevo Producto
+            </button>
+          </div>
+        </div>
+
+        <!-- Filtros y Búsqueda en Admin -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none"></i>
+            <input 
+              type="search" 
+              id="admin-product-search" 
+              placeholder="Buscar por nombre o descripción..." 
+              oninput="renderAdminProductsTable()"
+              class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+
+          <select 
+            id="admin-product-cat-filter" 
+            onchange="renderAdminProductsTable()"
+            class="px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 outline-none"
+          >
+            <option value="all">Todas las Categorías</option>
+            <option value="ropa">👕 Prendas / Ropa</option>
+            <option value="calzados">👟 Calzados</option>
+            <option value="accesorios">🎒 Accesorios</option>
+          </select>
+        </div>
+
+        <!-- Tabla de Productos -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 font-bold uppercase tracking-wider">
+                  <th class="p-4">Producto</th>
+                  <th class="p-4">Categoría</th>
+                  <th class="p-4">Precio</th>
+                  <th class="p-4">Stock</th>
+                  <th class="p-4">Tallas</th>
+                  <th class="p-4 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="admin-products-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                <!-- Inyectado dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PESTAÑA 2: INFORMACIÓN DE LA TIENDA Y CONTACTO -->
+      <section id="admin-view-store" class="space-y-6 hidden">
+        <div>
+          <h2 class="text-xl font-black text-slate-900 dark:text-white">Información de la Tienda & Contacto</h2>
+          <p class="text-xs text-slate-400">Modifica los teléfonos, WhatsApp, correos, dirección y horarios visibles en la tienda en tiempo real.</p>
+        </div>
+
+        <form id="store-config-form" onsubmit="handleSaveStoreConfig(event)" class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 text-xs">
+          
+          <!-- Identidad -->
+          <div>
+            <h3 class="text-sm font-black text-slate-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+              <i data-lucide="store" class="w-4 h-4 text-amber-500"></i> Identidad de la Empresa
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="cfg-store-name" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nombre de la Empresa</label>
+                <input type="text" id="cfg-store-name" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+
+              <div>
+                <label for="cfg-tagline" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Eslogan / Subtítulo</label>
+                <input type="text" id="cfg-tagline" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="cfg-announcement" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Mensaje de Barra Superior de Anuncios</label>
+                <input type="text" id="cfg-announcement" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+            </div>
+          </div>
+
+          <!-- Contacto Directo -->
+          <div>
+            <h3 class="text-sm font-black text-slate-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+              <i data-lucide="phone" class="w-4 h-4 text-amber-500"></i> Canales de Contacto y Atención
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="cfg-phone" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Teléfono Principal de Llamadas</label>
+                <input type="text" id="cfg-phone" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+
+              <div>
+                <label for="cfg-whatsapp" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Número de WhatsApp (con código de país)</label>
+                <input type="text" id="cfg-whatsapp" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+
+              <div>
+                <label for="cfg-email" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Correo Electrónico de Soporte</label>
+                <input type="email" id="cfg-email" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+
+              <div>
+                <label for="cfg-hours" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Horarios de Atención</label>
+                <input type="text" id="cfg-hours" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="cfg-address" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Dirección Física de la Tienda</label>
+                <input type="text" id="cfg-address" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+            </div>
+          </div>
+
+          <!-- Redes Sociales -->
+          <div>
+            <h3 class="text-sm font-black text-slate-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+              <i data-lucide="share-2" class="w-4 h-4 text-amber-500"></i> Redes Sociales
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label for="cfg-instagram" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Instagram URL</label>
+                <input type="url" id="cfg-instagram" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+              <div>
+                <label for="cfg-facebook" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Facebook URL</label>
+                <input type="url" id="cfg-facebook" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+              <div>
+                <label for="cfg-twitter" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Twitter / X URL</label>
+                <input type="url" id="cfg-twitter" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+            <button type="submit" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md flex items-center gap-2">
+              <i data-lucide="save" class="w-4 h-4"></i> Guardar Información de Contacto
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- PESTAÑA 3: PAGOS, ENVÍOS Y CUPONES -->
+      <section id="admin-view-payments" class="space-y-6 hidden">
+        <div>
+          <h2 class="text-xl font-black text-slate-900 dark:text-white">Configuración de Pagos, Envíos y Cupones</h2>
+          <p class="text-xs text-slate-400">Ajusta los umbrales de envío, costo logístico, impuestos y códigos promocionales.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Configuración Financiera y de Envíos -->
+          <form id="payments-config-form" onsubmit="handleSavePaymentsConfig(event)" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 text-xs">
+            <h3 class="text-sm font-black text-slate-900 dark:text-white pb-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+              <i data-lucide="truck" class="w-4 h-4 text-amber-500"></i> Parámetros de Envíos e Impuestos
+            </h3>
+
+            <div>
+              <label for="cfg-free-shipping" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Monto Mínimo para Envío Gratis ($)</label>
+              <input type="number" step="0.5" id="cfg-free-shipping" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div>
+              <label for="cfg-shipping-cost" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Costo de Envío Estándar ($)</label>
+              <input type="number" step="0.01" id="cfg-shipping-cost" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div>
+              <label for="cfg-tax-rate" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tasa de Impuesto / IVA (%)</label>
+              <input type="number" step="0.1" id="cfg-tax-rate" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div class="pt-2">
+              <label class="block font-bold text-slate-700 dark:text-slate-300 mb-2">Métodos de Pago Habilitados</label>
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="cfg-pay-card" checked class="accent-amber-500 w-4 h-4 rounded">
+                  <span>Tarjetas de Crédito / Débito (Visa, Mastercard)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="cfg-pay-paypal" checked class="accent-amber-500 w-4 h-4 rounded">
+                  <span>PayPal Express</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="cfg-pay-cash" checked class="accent-amber-500 w-4 h-4 rounded">
+                  <span>Pago Contra Entrega (Efectivo al recibir)</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+              <button type="submit" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Guardar Envíos y Pagos
+              </button>
+            </div>
+          </form>
+
+          <!-- Gestor de Cupones -->
+          <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 text-xs">
+            <h3 class="text-sm font-black text-slate-900 dark:text-white pb-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+              <i data-lucide="tag" class="w-4 h-4 text-amber-500"></i> Cupones de Descuento
+            </h3>
+
+            <!-- Formulario Crear Cupón -->
+            <form id="create-coupon-form" onsubmit="handleCreateCoupon(event)" class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+              <p class="font-bold text-slate-900 dark:text-white">Crear Nuevo Cupón:</p>
+              
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <input type="text" id="new-coupon-code" required placeholder="CÓDIGO (Ej: FLASH25)" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none uppercase font-mono">
+                </div>
+                <div>
+                  <select id="new-coupon-type" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                    <option value="percent">% Porcentaje</option>
+                    <option value="fixed">$ Monto Fijo</option>
+                    <option value="shipping">Envío Gratis</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <input type="number" step="0.5" id="new-coupon-val" required placeholder="Valor (ej: 15)" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                </div>
+                <div>
+                  <input type="text" id="new-coupon-label" required placeholder="Descripción (ej: 15% OFF)" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                </div>
+              </div>
+
+              <button type="submit" class="w-full py-2 bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white font-bold rounded-lg transition">
+                + Agregar Cupón
+              </button>
+            </form>
+
+            <!-- Lista de Cupones Activos -->
+            <div>
+              <p class="font-bold text-slate-700 dark:text-slate-300 mb-2">Cupones Activos:</p>
+              <div id="admin-coupons-list" class="space-y-2">
+                <!-- Inyectado dinámicamente -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PESTAÑA 4: PEDIDOS RECIBIDOS -->
+      <section id="admin-view-orders" class="space-y-6 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-black text-slate-900 dark:text-white">Pedidos y Órdenes</h2>
+            <p class="text-xs text-slate-400">Historial de compras realizadas por los clientes en la tienda.</p>
+          </div>
+          <button type="button" onclick="clearAllOrders()" class="text-xs font-bold text-rose-500 hover:underline">
+            Limpiar Historial de Pedidos
+          </button>
+        </div>
+
+        <div id="admin-orders-container" class="space-y-4">
+          <!-- Inyectado dinámicamente -->
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL: CREAR / EDITAR PRODUCTO -->
+  <div id="product-modal" class="modal-backdrop fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onclick="if(event.target === this) closeProductModal();">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 md:p-8 relative shadow-2xl border border-slate-200 dark:border-slate-800 my-8">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-6">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-bold">
+            🦆
+          </div>
+          <h3 id="product-modal-title" class="text-lg font-black text-slate-900 dark:text-white">Agregar Producto</h3>
+        </div>
+        <button type="button" onclick="closeProductModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="product-form" onsubmit="handleSaveProduct(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="prod-id">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label for="prod-name" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nombre del Producto *</label>
+            <input type="text" id="prod-name" required placeholder="Ej: Camiseta Oversize Patito" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div>
+            <label for="prod-category" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Categoría *</label>
+            <select id="prod-category" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="ropa">👕 Ropa / Prendas</option>
+              <option value="calzados">👟 Calzados</option>
+              <option value="accesorios">🎒 Accesorios</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="prod-badge" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Etiqueta / Badge (Opcional)</label>
+            <input type="text" id="prod-badge" placeholder="Ej: Nuevo, Más Vendido, Oferta" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div>
+            <label for="prod-price" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Precio de Venta ($) *</label>
+            <input type="number" step="0.01" id="prod-price" required placeholder="24.99" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div>
+            <label for="prod-original-price" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Precio Original Antes de Descuento ($)</label>
+            <input type="number" step="0.01" id="prod-original-price" placeholder="32.99" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div>
+            <label for="prod-stock" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Stock Disponible (unidades) *</label>
+            <input type="number" id="prod-stock" required value="20" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div>
+            <label for="prod-sizes" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tallas (Separadas por comas) *</label>
+            <input type="text" id="prod-sizes" required placeholder="S, M, L, XL" value="S, M, L, XL" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="prod-image" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">URL de la Imagen *</label>
+            <input type="url" id="prod-image" required placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="prod-desc" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Descripción del Producto</label>
+            <textarea id="prod-desc" rows="3" placeholder="Detalles de la confección, materiales y diseño..." class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+          <button type="button" onclick="closeProductModal()" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl font-bold transition">
+            Cancelar
+          </button>
+          <button type="submit" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl font-black transition shadow-md">
+            Guardar Producto
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="admin-toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

@@ -39,6 +39,21 @@ Una aplicación web moderna, accesible, intuitiva y 100% responsiva para **Patit
 - Marca cualquier producto como favorito con el icono de corazón.
 - Drawer lateral dedicado para visualizar tus artículos deseados y moverlos al carrito con un solo clic.
 
+### 🛠️ Panel de Administración y Gestión (`admin.html`)
+- **Acceso Administrativo**: Pantalla de login segura (Credenciales por defecto: `admin@patitoshop.com` / `patito2026`).
+- **Gestión de Productos (CRUD Completo)**:
+  - Crear nuevos productos (con foto, tallas, precio, stock, descripción, badge).
+  - Editar cualquier producto existente y ajustar precios o stock.
+  - Eliminar productos o restaurar el catálogo original de fábrica.
+- **Información de la Tienda & Contacto**:
+  - Modificar teléfonos, WhatsApp, correo de soporte, horarios, dirección y anuncio superior en vivo.
+- **Pagos, Envíos & Cupones**:
+  - Ajustar umbral para envío gratis, costo de envío e IVA.
+  - Habilitar o deshabilitar métodos de pago (Tarjetas, PayPal, Contra Entrega).
+  - Crear nuevos códigos de cupones de descuento (porcentaje o monto fijo).
+- **Gestor de Pedidos**:
+  - Visualizar todas las órdenes de compra realizadas por los clientes con sus datos de contacto y entrega.
+
 ### ♿ Accesibilidad (WCAG AA) & Experiencia de Usuario (UX)
 - Navegación por teclado completa (foco visible accesible, tecla `Escape` para cerrar cualquier modal/drawer).
 - Enlace de salto rápido (*Skip Link*) para lectores de pantalla.

@@ -38,10 +38,24 @@ AppState.filteredProducts = [...AppState.products];
 // INICIALIZACIÓN
 // ==========================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
   applyStoreConfigToUI();
   initEventListeners();
+
+  // Si Firebase está conectado, refrescar catálogo desde Cloud Firestore
+  if (window.FirebaseService && window.FirebaseService.init()) {
+    try {
+      const cloudProds = await window.FirebaseService.getProducts();
+      if (cloudProds && cloudProds.length > 0) {
+        AppState.products = cloudProds;
+        AppState.filteredProducts = [...cloudProds];
+      }
+    } catch (e) {
+      console.warn('Fallo al sincronizar productos desde Firestore:', e);
+    }
+  }
+
   renderProducts();
   updateCartUI();
   updateWishlistUI();
@@ -960,41 +974,45 @@ function handleCheckoutSubmit(e) {
 
     document.getElementById('order-total-display').textContent = `$${totals.total.toFixed(2)}`;
 
-    // Registrar pedido en el historial para el Panel de Administración
-    if (typeof saveStoredOrder === 'function') {
-      saveStoredOrder({
-        id: orderNumber,
-        date: new Date().toISOString(),
-        dateFormatted: new Date().toLocaleDateString('es-ES', { 
-          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-        }),
-        customer: {
-          fullName,
-          email,
-          phone: document.getElementById('cust-phone')?.value || '',
-          address,
-          city,
-          zip: document.getElementById('cust-zip')?.value || ''
-        },
-        items: purchasedItems.map(it => ({
-          name: it.product.name,
-          category: it.product.categoryLabel,
-          size: it.size,
-          color: it.color,
-          quantity: it.quantity,
-          price: it.product.price,
-          total: it.product.price * it.quantity
-        })),
-        totals: {
-          subtotal: totals.subtotal,
-          discount: totals.discountAmount,
-          shipping: totals.shipping,
-          taxes: totals.taxes,
-          total: totals.total
-        },
-        paymentMethod: document.querySelector('input[name="payment_method"]:checked')?.value || 'card',
-        status: 'Pagado y Confirmado'
-      });
+    // Registrar pedido en el historial y en Cloud Firestore si está disponible
+    const orderData = {
+      id: orderNumber,
+      date: new Date().toISOString(),
+      dateFormatted: new Date().toLocaleDateString('es-ES', { 
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+      }),
+      customer: {
+        fullName,
+        email,
+        phone: document.getElementById('cust-phone')?.value || '',
+        address,
+        city,
+        zip: document.getElementById('cust-zip')?.value || ''
+      },
+      items: purchasedItems.map(it => ({
+        name: it.product.name,
+        category: it.product.categoryLabel,
+        size: it.size,
+        color: it.color,
+        quantity: it.quantity,
+        price: it.product.price,
+        total: it.product.price * it.quantity
+      })),
+      totals: {
+        subtotal: totals.subtotal,
+        discount: totals.discountAmount,
+        shipping: totals.shipping,
+        taxes: totals.taxes,
+        total: totals.total
+      },
+      paymentMethod: document.querySelector('input[name="payment_method"]:checked')?.value || 'card',
+      status: 'Pagado y Confirmado'
+    };
+
+    if (window.FirebaseService) {
+      window.FirebaseService.saveOrder(orderData);
+    } else if (typeof saveStoredOrder === 'function') {
+      saveStoredOrder(orderData);
     }
 
     // Vaciar carrito

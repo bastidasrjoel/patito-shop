@@ -551,10 +551,90 @@ const PRODUCTS_DATA = [
   }
 ];
 
-// Cupones de descuento válidos
-const DISCOUNT_COUPONS = {
+// Configuración predeterminada de la tienda
+const DEFAULT_STORE_CONFIG = {
+  storeName: "Patito SHOP",
+  tagline: "Prendas • Calzados • Accesorios",
+  phone: "+1 (800) 728-486",
+  whatsapp: "+1800728486",
+  email: "hola@patitoshop.com",
+  address: "Av. Estilo Urbano 101",
+  hours: "Lun a Sáb: 9am - 8pm",
+  announcement: "¡Envío GRATIS en compras sobre $50! Usa el cupón PATITO10 para 10% OFF",
+  freeShippingThreshold: 50.00,
+  shippingCost: 4.99,
+  taxRate: 8,
+  currencySymbol: "$",
+  instagramUrl: "https://instagram.com",
+  facebookUrl: "https://facebook.com",
+  twitterUrl: "https://twitter.com",
+  paymentMethods: {
+    card: true,
+    paypal: true,
+    cash: true
+  }
+};
+
+// Cupones de descuento predeterminados
+const DEFAULT_COUPONS = {
   'PATITO10': { type: 'percent', value: 10, label: '10% de Descuento por Bienvenida' },
   'PATITOPREMIUM': { type: 'percent', value: 20, label: '20% de Descuento Especial Patito' },
   'ENVIOGRATIS': { type: 'shipping', value: 0, label: 'Envío Gratis Garantizado' },
   'VERANO': { type: 'fixed', value: 15, label: '$15 USD de Descuento de Verano' }
 };
+
+// Helpers de persistencia para Tienda y Admin
+function getStoreConfig() {
+  try {
+    const raw = localStorage.getItem('patito_store_config');
+    return raw ? { ...DEFAULT_STORE_CONFIG, ...JSON.parse(raw) } : { ...DEFAULT_STORE_CONFIG };
+  } catch (e) {
+    return { ...DEFAULT_STORE_CONFIG };
+  }
+}
+
+function saveStoreConfig(cfg) {
+  localStorage.setItem('patito_store_config', JSON.stringify(cfg));
+}
+
+function getStoredProducts() {
+  try {
+    const raw = localStorage.getItem('patito_products');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {}
+  return [...PRODUCTS_DATA];
+}
+
+function saveStoredProducts(products) {
+  localStorage.setItem('patito_products', JSON.stringify(products));
+}
+
+function getStoredCoupons() {
+  try {
+    const raw = localStorage.getItem('patito_coupons');
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { ...DEFAULT_COUPONS };
+}
+
+function saveStoredCoupons(coupons) {
+  localStorage.setItem('patito_coupons', JSON.stringify(coupons));
+}
+
+function getStoredOrders() {
+  try {
+    const raw = localStorage.getItem('patito_orders');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveStoredOrder(order) {
+  const orders = getStoredOrders();
+  orders.unshift(order);
+  localStorage.setItem('patito_orders', JSON.stringify(orders));
+}

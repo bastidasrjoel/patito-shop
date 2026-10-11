@@ -187,6 +187,10 @@
         <button type="button" onclick="switchAdminTab('orders')" id="tab-btn-orders" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 shrink-0">
           <i data-lucide="shopping-bag" class="w-4 h-4"></i> Pedidos Recibidos (<span id="tab-count-orders">0</span>)
         </button>
+        <button type="button" onclick="switchAdminTab('firebase')" id="tab-btn-firebase" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 shrink-0">
+          <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> Cloud Firebase
+          <span id="firebase-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Desconectado</span>
+        </button>
       </div>
     </div>
 
@@ -528,6 +532,139 @@
         </div>
       </section>
 
+      <!-- PESTAÑA 5: CONEXIÓN CLOUD FIREBASE -->
+      <section id="admin-view-firebase" class="space-y-6 hidden">
+        <div>
+          <h2 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-2xl">🔥</span> Integración con Google Firebase & Cloud Firestore
+          </h2>
+          <p class="text-xs text-slate-400">Conecta tu base de datos en la nube para sincronizar productos, pedidos y configuración en tiempo real.</p>
+        </div>
+
+        <!-- Estado de Conexión y Acciones Rápidas -->
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div id="firebase-status-icon" class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-xl">
+              🔥
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Estado del Enlace Cloud:</h3>
+                <span id="firebase-status-text" class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase bg-slate-100 dark:bg-slate-800 text-slate-500">
+                  Desconectado
+                </span>
+              </div>
+              <p id="firebase-status-detail" class="text-xs text-slate-400 mt-0.5">
+                Ingresa las credenciales de tu proyecto de Firebase abajo para activar el almacenamiento en la nube.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button 
+              type="button" 
+              onclick="testFirebaseConnection()" 
+              class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300 text-xs font-bold transition flex items-center gap-1.5"
+            >
+              <i data-lucide="activity" class="w-4 h-4 text-amber-500"></i> Probar Conexión (Ping)
+            </button>
+
+            <button 
+              type="button" 
+              onclick="syncLocalToFirebase()" 
+              class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition shadow-md flex items-center gap-1.5"
+            >
+              <i data-lucide="cloud-upload" class="w-4 h-4"></i> Subir Catálogo a Firebase
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Formulario de Configuración de Firebase -->
+          <div class="lg:col-span-7 bg-white dark:bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 text-xs">
+            <h3 class="text-sm font-black text-slate-900 dark:text-white pb-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+              <i data-lucide="key" class="w-4 h-4 text-amber-500"></i> Parámetros de Configuración Firebase
+            </h3>
+
+            <form id="firebase-config-form" onsubmit="handleSaveFirebaseConfig(event)" class="space-y-4">
+              <div>
+                <label for="fb-api-key" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">API Key (apiKey) *</label>
+                <input type="text" id="fb-api-key" required placeholder="AIzaSy..." class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="fb-project-id" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Project ID (projectId) *</label>
+                  <input type="text" id="fb-project-id" required placeholder="patito-shop-XXXXX" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+                </div>
+
+                <div>
+                  <label for="fb-auth-domain" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Auth Domain (authDomain)</label>
+                  <input type="text" id="fb-auth-domain" placeholder="patito-shop.firebaseapp.com" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="fb-storage-bucket" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Storage Bucket</label>
+                  <input type="text" id="fb-storage-bucket" placeholder="patito-shop.appspot.com" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+                </div>
+
+                <div>
+                  <label for="fb-messaging-id" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Messaging Sender ID</label>
+                  <input type="text" id="fb-messaging-id" placeholder="1029384756..." class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+                </div>
+              </div>
+
+              <div>
+                <label for="fb-app-id" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">App ID (appId)</label>
+                <input type="text" id="fb-app-id" placeholder="1:1029384756:web:abcd1234ef..." class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+              </div>
+
+              <div class="pt-2 flex justify-between items-center">
+                <button type="button" onclick="clearFirebaseConfig()" class="text-rose-500 font-bold hover:underline">
+                  Desvincular Firebase
+                </button>
+                <button type="submit" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition shadow-md flex items-center gap-2">
+                  <i data-lucide="save" class="w-4 h-4"></i> Guardar y Conectar Firebase
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Guía de Configuración -->
+          <div class="lg:col-span-5 bg-gradient-to-b from-amber-50 to-orange-50 dark:from-slate-900 dark:to-slate-900/90 p-6 rounded-2xl border border-amber-200/80 dark:border-slate-800 shadow-sm space-y-4 text-xs">
+            <h4 class="font-black text-slate-900 dark:text-white flex items-center gap-2 text-sm">
+              <i data-lucide="info" class="w-4 h-4 text-amber-500"></i> ¿Cómo obtener tus credenciales de Firebase?
+            </h4>
+            
+            <ol class="space-y-3 list-decimal list-inside text-slate-600 dark:text-slate-300 leading-relaxed">
+              <li>
+                Entra a la <a href="https://console.firebase.google.com" target="_blank" class="text-amber-600 dark:text-amber-400 font-bold underline">Consola de Firebase</a> con tu cuenta de Google.
+              </li>
+              <li>
+                Crea un proyecto nuevo (por ejemplo: <strong class="font-mono">patito-shop</strong>).
+              </li>
+              <li>
+                En el menú lateral izquierdo, ve a <strong>Compilación &gt; Firestore Database</strong> y haz clic en <strong>Crear base de datos</strong> (selecciona modo de prueba o reglas de lectura/escritura abiertas).
+              </li>
+              <li>
+                Ve a <strong>Configuración del proyecto</strong> (icono de engranaje ⚙️) &gt; General &gt; <em>Tus apps</em> y selecciona el icono Web (<strong>&lt;/&gt;</strong>).
+              </li>
+              <li>
+                Copia el objeto <strong class="font-mono">firebaseConfig</strong> y pega los valores en este formulario.
+              </li>
+            </ol>
+
+            <div class="p-3 bg-white/80 dark:bg-slate-800/80 rounded-xl border border-amber-200/60 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400">
+              💡 <strong>Ventaja híbrida:</strong> La aplicación funciona tanto en modo local (sin conexión a internet) como con Cloud Firestore en tiempo real cuando configuras tu proyecto.
+            </div>
+          </div>
+
+        </div>
+      </section>
+
     </main>
 
   </div>
@@ -617,6 +754,11 @@
 
   <!-- TOAST CONTAINER -->
   <div id="admin-toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
+
+  <!-- Firebase Cloud SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
 
   <!-- Scripts -->
   <script src="js/products.js"></script>
